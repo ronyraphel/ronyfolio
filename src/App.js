@@ -537,9 +537,59 @@ export default function App() {
         .divider { width: 36px; height: 2px; border-radius: 2px; background: var(--accent); margin: 14px 0 44px; }
 
         /* ── About ── */
-        .about-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 72px; align-items: center; }
+        .about-grid { display: grid; grid-template-columns: 260px 1fr 1fr; gap: 56px; align-items: start; }
         .about-text p { color: var(--text-muted); font-size: 0.975rem; font-weight: 300; line-height: 1.85; margin-bottom: 18px; }
         .skills-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+
+        /* ── Photo Card ── */
+        .photo-col { display: flex; flex-direction: column; gap: 16px; }
+        .photo-card {
+          position: relative; border-radius: 16px; overflow: hidden;
+          aspect-ratio: 3 / 4; background: var(--surface2);
+          border: 1px solid var(--border-subtle);
+          box-shadow: var(--shadow-card);
+          transition: box-shadow 0.35s var(--ease-out), transform 0.35s var(--ease-out);
+        }
+        .photo-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-hover); }
+        .photo-card img {
+          width: 100%; height: 100%; object-fit: cover; object-position: center top;
+          display: block; transition: transform 0.55s var(--ease-out);
+        }
+        .photo-card:hover img { transform: scale(1.03); }
+        .photo-card::after {
+          content: ''; position: absolute; inset: 0;
+          background: linear-gradient(180deg, transparent 55%, rgba(8,8,10,0.6) 100%);
+          pointer-events: none;
+        }
+        .photo-card::before {
+          content: ''; position: absolute; left: 0; top: 20%; bottom: 20%;
+          width: 2px; background: var(--accent); border-radius: 2px;
+          opacity: 0; transition: opacity 0.35s; z-index: 2;
+        }
+        .photo-card:hover::before { opacity: 1; }
+        .photo-name-tag {
+          position: absolute; bottom: 16px; left: 16px; right: 16px;
+          z-index: 3; display: flex; flex-direction: column; gap: 2px;
+        }
+        .photo-name {
+          font-family: var(--font-display); font-size: 0.95rem; font-weight: 700;
+          color: var(--text); letter-spacing: -0.01em;
+        }
+        .photo-role { font-size: 0.72rem; color: var(--accent); font-weight: 500; letter-spacing: 0.06em; text-transform: uppercase; }
+        .photo-badge {
+          display: inline-flex; align-items: center; gap: 7px;
+          padding: 8px 14px; border-radius: 10px;
+          background: var(--surface2); border: 1px solid var(--border-subtle);
+          font-size: 0.75rem; font-weight: 500; color: var(--text-muted); width: fit-content;
+        }
+        .photo-badge-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--accent); animation: pulse-dot 2.2s ease-in-out infinite; flex-shrink: 0; }
+        .photo-placeholder {
+          width: 100%; height: 100%;
+          display: flex; flex-direction: column; align-items: center; justify-content: center;
+          gap: 12px; color: var(--text-dim);
+        }
+        .photo-placeholder-icon { font-size: 3rem; opacity: 0.25; }
+        .photo-placeholder-text { font-size: 0.72rem; letter-spacing: 0.1em; text-transform: uppercase; opacity: 0.35; }
         .skill-pill {
           display: flex; flex-direction: column; gap: 5px;
           padding: 18px; background: var(--surface2);
@@ -728,15 +778,24 @@ export default function App() {
         .back-to-top:hover { background: var(--surface3); border-color: rgba(132,204,22,0.3); transform: translateY(-2px) !important; }
 
         /* ── Responsive ── */
+        @media (max-width: 1024px) {
+          .about-grid { grid-template-columns: 220px 1fr; gap: 40px; }
+          .about-grid > .skills-grid { grid-column: 1 / -1; grid-template-columns: repeat(4, 1fr); }
+        }
         @media (max-width: 768px) {
           .nav-links, .nav-cta { display: none; }
           .hamburger { display: flex; }
-          .about-grid { grid-template-columns: 1fr; gap: 44px; }
+          .about-grid { grid-template-columns: 1fr; gap: 36px; }
+          .about-grid > .skills-grid { grid-column: auto; grid-template-columns: 1fr 1fr; }
+          .photo-col { flex-direction: row; align-items: flex-start; gap: 16px; }
+          .photo-card { width: 160px; flex-shrink: 0; }
           .skills-grid { grid-template-columns: 1fr 1fr; }
           .contact-box { padding: 44px 28px; }
           .section { padding: 80px 20px; }
         }
         @media (max-width: 480px) {
+          .photo-col { flex-direction: column; }
+          .photo-card { width: 100%; }
           .skills-grid { grid-template-columns: 1fr; }
           .hero-actions { flex-direction: column; align-items: center; }
           .contact-box { padding: 36px 20px; }
@@ -801,6 +860,36 @@ export default function App() {
       <section id="about" className="section" style={{ background: "var(--bg)" }}>
         <div className="section-inner">
           <div className="about-grid">
+
+            {/* Photo column */}
+            <div className="photo-col">
+              <div className="photo-card">
+                <img
+                  src="/images/profile.jpg"
+                  alt="Rony Raphel"
+                  loading="lazy"
+                  onError={(e) => {
+                    e.target.style.display = "none";
+                    e.target.parentNode.querySelector(".photo-placeholder").style.display = "flex";
+                  }}
+                />
+                {/* Fallback placeholder shown if image fails to load */}
+                <div className="photo-placeholder" style={{ display: "none" }}>
+                  <span className="photo-placeholder-icon">🧑‍💻</span>
+                  <span className="photo-placeholder-text">Add photo</span>
+                </div>
+                <div className="photo-name-tag">
+                  <span className="photo-name">Rony Raphel</span>
+                  <span className="photo-role">Full-Stack Developer</span>
+                </div>
+              </div>
+              <div className="photo-badge">
+                <span className="photo-badge-dot" />
+                Open to opportunities
+              </div>
+            </div>
+
+            {/* Bio column */}
             <div className="about-text">
               <p className="section-label">About Me</p>
               <h2 className="section-title">Turning ideas<br />into reality.</h2>
@@ -808,6 +897,8 @@ export default function App() {
               <p>I recently graduated with a degree in Computer Science, gaining experience in programming, software development, and database management.</p>
               <p>I enjoy solving problems, learning new technologies, and building projects that create real value. When I'm not coding, I'm travelling, cooking, or geeking out over cars!</p>
             </div>
+
+            {/* Skills column */}
             <div className="skills-grid">
               {skills.map((s) => (
                 <div key={s.label} className="skill-pill">
@@ -819,6 +910,7 @@ export default function App() {
                 </div>
               ))}
             </div>
+
           </div>
           <div className="tech-stack">
             <p className="tech-label">Technologies I work with</p>
