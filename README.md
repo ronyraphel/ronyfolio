@@ -69,7 +69,7 @@ The goal of this project is to:
 
 ## 📬 Contact
 
-- Email: your-email@example.com  
+- Email: ronyraphelm@gmail.com
 - GitHub: https://github.com/ronyraphel
 - LinkedIn: https://linkedin.com/in/ronyraphel
 
